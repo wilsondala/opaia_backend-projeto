@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    container_name: opaia_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: opaia
+    volumes:
+      - opaia_postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: opaia_backend
+    restart: always
+    volumes:
+      - .:/code
+      - ./uploads:/code/uploads  # Pasta persistente para uploads
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/opaia
+      SECRET_KEY: supersecretkey
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+    working_dir: /code  # ⬅️ garante que está executando no diretório certo
+    command: >
+      sh -c "./wait-for-postgres.sh db uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+
+volumes:
+  opaia_postgres_data:
