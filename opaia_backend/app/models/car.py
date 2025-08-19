@@ -1,3 +1,4 @@
+# app/models/car.py
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, Text
 from sqlalchemy.orm import relationship
 from app.db.base_class import Base
@@ -18,8 +19,9 @@ class Car(Base):
     preco = Column(Float, nullable=True)
     quilometragem = Column(Integer, nullable=True)
     descricao = Column(Text, nullable=True)
+    imagem_url = Column(String, nullable=True)  # Adicionado para armazenar URL da imagem
 
-    dono_id = Column(Integer, ForeignKey("users.id"))
+    dono_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     dono = relationship("User", back_populates="cars")
 
     images = relationship("CarImage", back_populates="car", cascade="all, delete-orphan")

@@ -7,7 +7,8 @@ from app.models.car import Car
 from app.models.user import User
 from app.schemas.car import CarCreate, CarOut
 
-router = APIRouter(prefix="/cars", tags=["Carros"])
+# Remove o prefix aqui; o prefix será definido apenas no api.py
+router = APIRouter(tags=["Carros"])
 
 @router.post("/", response_model=CarOut)
 def criar_carro(
